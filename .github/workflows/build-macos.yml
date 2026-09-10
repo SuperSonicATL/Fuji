@@ -3,9 +3,14 @@ name: Build Fuji for macOS
 on:
   push:
     branches: [ "**" ]
+    tags:
+      - "v*"
   pull_request:
     branches: [ "**" ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -49,3 +54,17 @@ jobs:
         with:
           name: Fuji-App-Bundle
           path: dist/Fuji.app
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.dmg
+          title: Fuji 1.2.0 (Patched with PR #40 & PR #43)
+          body: |
+            ### Fuji 1.2.0 for Apple Mac (macOS)
+            
+            Compiled automatically with fixes from Pull Requests:
+            - **PR #40**: FileVault no-mount unlock and read-only mounting in Recovery mode
+            - **PR #43**: Prevent Ditto acquisition from hanging on named pipes (FIFOs)
+            - Fixed launcher executable bit permissions (`chmod 0o755`)
