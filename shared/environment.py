@@ -110,6 +110,10 @@ def attempt_ramdisk() -> None:
 
         # Determine the new executable path
         ramdisk_executable = ramdisk / "Fuji.app" / "Contents" / "MacOS" / "Fuji"
+        try:
+            ramdisk_executable.chmod(0o755)
+        except (OSError, AttributeError):
+            pass
 
         # Detach the original volume and create symlink in a detached shell process after a delay
         quoted_source_fujiapp = shlex.quote(source_fujiapp.as_posix())
