@@ -27,15 +27,24 @@ jobs:
 
       - name: Build macOS App and DMG
         run: |
-          pyinstaller --noconfirm Fuji.spec
+          pyinstaller --noconfirm Fuji.spec 2>&1 | tee build.log
+
+      - name: Upload Build Log (if failed)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-failure-log
+          path: build.log
 
       - name: Upload DMG artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: FujiApp-DMG
           path: dist/*.dmg
 
       - name: Upload App Bundle artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Fuji-App-Bundle

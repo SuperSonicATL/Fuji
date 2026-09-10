@@ -1,9 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import importlib
+import os
 import subprocess
 import sys
-from os import remove
 from pathlib import Path
 from shutil import copy, copytree, move
 
@@ -30,7 +30,7 @@ a = Analysis( # type: ignore
 )
 pyz = PYZ(a.pure) # type: ignore
 
-target_arch = "universal2" if is_darwin else None
+target_arch = os.environ.get("FUJI_TARGET_ARCH", None)
 icon = ["packaging/Fuji.icns"] if is_darwin else None
 
 exe = EXE( # type: ignore
@@ -147,6 +147,7 @@ if is_darwin:
             dmg_path,
         ]
     )
-    remove(temp_dmg_path)
+    if os.path.exists(temp_dmg_path):
+        os.remove(temp_dmg_path)
 
     print("Done!")
